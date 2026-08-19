@@ -7,6 +7,11 @@ tenv terraform install 1.14.3
 tenv tf use 1.14.3
 
 # --- prompt ---
+# NOTE: bashrc_manager sets PROMPT_COMMAND to rebuild PS1 on every prompt, which
+# overrides any plain `PS1=`. So we override PROMPT_COMMAND here (this file is
+# sourced after bashrc_manager, so our assignment wins). We keep the manager's
+# remaining_mfa_time timer and add a two-line layout with the git branch.
+
 git_branch_name() {
     git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
@@ -15,4 +20,11 @@ __c_white=$(tput setaf 15 2>/dev/null)
 __c_blue=$(tput setaf 117 2>/dev/null)
 __c_reset=$(tput sgr0 2>/dev/null)
 
-PS1='\[${__c_white}\]\u@\h \w \[${__c_reset}\]'$'\n''\[${__c_blue}\]$(git_branch_name) \[${__c_white}\]$ '
+__personal_prompt() {
+    local mfa branch
+    # remaining_mfa_time is defined in the skel-provided bashrc_manager
+    mfa=$(type -t remaining_mfa_time >/dev/null 2>&1 && remaining_mfa_time 2>/dev/null)
+    branch=$(git_branch_name)
+    PS1="\[${__c_white}\]\u@\h \w ${mfa:+$mfa }\[${__c_reset}\]\n \[${__c_blue}\]${branch:+$branch }\[${__c_white}\]\$ \[${__c_reset}\]"
+}
+PROMPT_COMMAND=__personal_prompt
