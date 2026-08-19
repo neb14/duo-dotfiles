@@ -1,0 +1,18 @@
+# ~/.bashrc.d/personal — sourced by the skel-managed ~/.bashrc.
+# Personal shell config only. Survives bastion skel-sync (which owns ~/.bashrc).
+
+# --- tenv (Terraform version manager) ---
+use_homedir_tenv
+tenv terraform install 1.14.3
+tenv tf use 1.14.3
+
+# --- prompt ---
+git_branch_name() {
+    git rev-parse --abbrev-ref HEAD 2>/dev/null
+}
+
+__c_white=$(tput setaf 15 2>/dev/null)
+__c_blue=$(tput setaf 117 2>/dev/null)
+__c_reset=$(tput sgr0 2>/dev/null)
+
+PS1='\[${__c_white}\]\u@\h \w \[${__c_reset}\]'$'\n''\[${__c_blue}\]$(git_branch_name) \[${__c_white}\]$ '
