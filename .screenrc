@@ -1,1 +1,4 @@
 termcapinfo xterm* ti@:te@
+hardstatus alwayslastline
+# Format the bar to show the host, window numbers (%n), and titles (%t)
+hardstatus string "%{= kG}%H %{= kw}%-Lw%{= rk}%50>%n%f* %t%{-}%+Lw%<"
